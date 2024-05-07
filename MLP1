@@ -1,0 +1,26 @@
+import numpy as np
+from keras.layers import Dense
+from keras.models import Sequential
+import matplotlib.pyplot as plt
+
+pi = np.pi
+
+x_train_MLP = np.arange(-3, 3, 0.1)
+y_train_MLP = (np.sin(x_train_MLP) + 1) / 2 
+
+MLP = Sequential()
+MLP.add(Dense(10, input_dim=1, activation='sigmoid'))
+MLP.add(Dense(1))
+
+MLP.compile(loss='mean_squared_error', optimizer='SGD', metrics=['mean_squared_error'])
+MLP.fit(x_train_MLP, y_train_MLP, epochs=1000, batch_size=32, verbose=0)  # Reduce epochs and increase batch size
+
+predicted_MLP = 2 * MLP.predict(x_train_MLP) - 1
+
+plt.plot(x_train_MLP, predicted_MLP, 'b')
+plt.title('Sine Prediction With MLP')
+plt.ylabel('Y value')
+plt.xlabel('X Value')
+plt.grid(color='b', ls='-.', lw=0.25)
+plt.savefig('mlp.png')
+plt.show()
