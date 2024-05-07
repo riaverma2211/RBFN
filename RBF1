@@ -1,0 +1,60 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import random
+
+
+class RBF(object):
+
+    def __init__(self, shape, sigma=0.5):
+        self.shape = shape
+        self.sigma = sigma
+        self.centers = None
+        self.weights = None
+
+    def gaussian_kernel(self, center, data_point):
+        return np.exp(-1 * self.sigma * (np.linalg.norm(center - data_point) ** 2))
+
+    def interpolation_matrix(self, X):
+        matrix = np.zeros(len(X) * self.shape)
+        counter = 0
+        for inp in X:
+            for center in self.centers:
+                kernel = self.gaussian_kernel(center, inp)
+                matrix[counter] = kernel
+                counter += 1
+        return matrix.reshape(len(X), self.shape)
+
+    def select_centers(self, X):
+        centers = []
+        random_indices = random.sample(range(0, len(X)), self.shape)
+        for rnd in random_indices:
+            centers.append(X[rnd])
+        return np.array(centers)
+
+    def fit(self, X, Y):
+        self.centers = self.select_centers(X)
+        im = self.interpolation_matrix(X)
+        self.weights = np.dot(np.linalg.pinv(im), Y)
+
+    def predict(self, X):
+        im = self.interpolation_matrix(X)
+        predictions = np.dot(im, self.weights)
+        return predictions
+
+
+
+
+x_train_RBF = np.arange(-3, 3, 0.1)
+y_train_RBF = np.sin(x_train_RBF)
+
+RBFN = RBF(shape=10)
+RBFN.fit(x_train_RBF, y_train_RBF)
+y_pred_RBF = RBFN.predict(x_train_RBF)
+
+plt.plot(x_train_RBF, y_pred_RBF, 'g-', label='predicted')
+plt.title('Sine Prediction RBFN')
+plt.ylabel('Y value')
+plt.xlabel('X Value')
+plt.grid(color='b', ls = '-.', lw = 0.25)
+plt.savefig('rbf.png')        
+plt.show()
