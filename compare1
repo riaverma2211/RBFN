@@ -1,0 +1,16 @@
+x_train_compare = np.arange(-4, 4, 0.1)
+
+MLP_prediction = 2 * MLP.predict(x_train_compare) - 1
+
+RBF_prediction = RBFN.predict(x_train_compare)
+
+real_values = np.sin(x_train_compare)
+
+plt.plot(x_train_compare, real_values, 'r--', label='Real')
+plt.plot(x_train_compare, MLP_prediction, 'b-', label='MLP')
+plt.plot(x_train_compare, RBF_prediction, 'y-', label='RBF')
+
+plt.legend(loc='upper right')
+plt.grid(color='b', ls = '-.', lw = 0.25)
+plt.savefig('compare.png')
+plt.show()
